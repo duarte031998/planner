@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mi Planner">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#F7F2EC;color:#3A2F2D;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box}
+input,textarea,button{font:inherit;color:inherit}
+input:focus,textarea:focus{outline:none}
+a{color:#A8645F}a:hover{color:#3A2F2D}
+::placeholder{color:#B8A9A3}
+</style>
+</helmet>
+
+<div style="display:flex;min-height:100vh;font-family:'Jost',sans-serif;font-weight:400;background:#F7F2EC">
+
+  <aside style="width:212px;flex-shrink:0;background:#EFE6DD;padding:32px 18px 24px;display:flex;flex-direction:column;gap:28px;position:sticky;top:0;height:100vh">
+    <div style="display:flex;flex-direction:column;gap:4px;padding:0 10px">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:32px;line-height:1">Mi Planner</div>
+      <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#7A6A65">{{ yearLabel }}</div>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:4px">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+        <button onClick="{{ n.onClick }}" style="display:flex;align-items:center;gap:12px;min-height:48px;padding:0 14px;border:none;border-radius:14px;background:{{ n.bg }};cursor:pointer;text-align:left;font-size:16px;color:#3A2F2D">
+          <span style="width:10px;height:10px;border-radius:50%;background:{{ n.dot }};flex-shrink:0"></span>
+          <span>{{ n.label }}</span>
+        </button>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:6px;padding:0 4px">
+      <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7A6A65;padding:0 10px 4px">Tus datos se guardan en este iPad</div>
+      <button onClick="{{ onExport }}" style="min-height:44px;border:1px solid #D9C9BE;background:transparent;border-radius:12px;font-size:14px;cursor:pointer">Descargar copia</button>
+      <button onClick="{{ onImportClick }}" style="min-height:44px;border:none;background:transparent;border-radius:12px;font-size:14px;color:#7A6A65;cursor:pointer">Restaurar copia</button>
+      <input type="file" accept="application/json" ref="{{ fileRef }}" onChange="{{ onImport }}" style="display:none">
+    </div>
+  </aside>
+
+  <main style="flex:1;min-width:0;padding:36px 40px 60px">
+
+    <sc-if value="{{ isHoy }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#A8645F">{{ dayKicker }}</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:54px;line-height:1">{{ dayTitle }}</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:#7A6A65">{{ daySub }}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;gap:6px;width:180px">
+              <div style="display:flex;justify-content:space-between;font-size:13px;color:#7A6A65"><span>Progreso del día</span><span>{{ dayPct }}</span></div>
+              <div style="height:6px;border-radius:3px;background:#EADFD6;overflow:hidden"><div style="height:100%;width:{{ dayPct }};background:#C98B86;border-radius:3px"></div></div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button onClick="{{ prevDay }}" style="width:44px;height:44px;border-radius:50%;border:1px solid #E0D2C8;background:#FFFDFB;cursor:pointer;font-size:18px">‹</button>
+              <button onClick="{{ goToday }}" style="height:44px;padding:0 18px;border-radius:22px;border:1px solid #E0D2C8;background:#FFFDFB;cursor:pointer;font-size:14px">Hoy</button>
+              <button onClick="{{ nextDay }}" style="width:44px;height:44px;border-radius:50%;border:1px solid #E0D2C8;background:#FFFDFB;cursor:pointer;font-size:18px">›</button>
+            </div>
+          </div>
+        </header>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <section style="background:#F4E4E0;border-radius:22px;padding:22px 22px 14px;display:flex;flex-direction:column;gap:6px">
+              <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:26px">Mis 3 prioridades</div>
+              <div style="font-size:13px;color:#7A6A65;margin-bottom:6px">Si solo hago esto hoy, el día cuenta.</div>
+              <sc-for list="{{ top3 }}" as="t" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:10px;min-height:48px;border-bottom:1px solid #E6CFC9">
+                  <span style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#A8645F;width:18px">{{ t.num }}</span>
+                  <input value="{{ t.text }}" onChange="{{ t.onText }}" placeholder="Prioridad…" style="flex:1;min-width:0;border:none;background:transparent;font-size:16px;color:{{ t.textColor }};text-decoration:{{ t.deco }}">
+                  <button onClick="{{ t.onToggle }}" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;padding:0">
+                    <span style="width:24px;height:24px;border-radius:50%;border:1.5px solid {{ t.boxBorder }};background:{{ t.boxBg }};color:#FFFDFB;font-size:14px;display:flex;align-items:center;justify-content:center">{{ t.mark }}</span>
+                  </button>
+                </div>
+              </sc-for>
+            </section>
+
+            <section style="background:#FFFDFB;border:1px solid #EADFD6;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:26px;margin-bottom:4px">Pendientes</div>
+              <sc-for list="{{ tasks.items }}" as="t" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:6px;min-height:44px;border-bottom:1px dashed #EADFD6">
+                  <button onClick="{{ t.onToggle }}" style="width:40px;height:44px;display:flex;align-items:center;justify-content:flex-start;border:none;background:transparent;cursor:pointer;padding:0">
+                    <span style="width:22px;height:22px;border-radius:7px;border:1.5px solid {{ t.boxBorder }};background:{{ t.boxBg }};color:#FFFDFB;font-size:13px;display:flex;align-items:center;justify-content:center">{{ t.mark }}</span>
+                  </button>
+                  <input value="{{ t.text }}" onChange="{{ t.onText }}" style="flex:1;min-width:0;border:none;background:transparent;font-size:16px;color:{{ t.textColor }};text-decoration:{{ t.deco }}">
+                  <button onClick="{{ t.onDel }}" style="width:36px;height:44px;border:none;background:transparent;color:#B8A9A3;cursor:pointer;font-size:18px">×</button>
+                </div>
+              </sc-for>
+              <div style="display:flex;align-items:center;gap:8px;min-height:48px">
+                <input value="{{ tasks.draft }}" onChange="{{ tasks.onDraft }}" onKeyDown="{{ tasks.onKey }}" placeholder="Añadir tarea…" style="flex:1;min-width:0;border:none;background:transparent;font-size:16px">
+                <button onClick="{{ tasks.onAdd }}" style="width:36px;height:36px;border-radius:50%;border:none;background:#EFE6DD;cursor:pointer;font-size:18px">+</button>
+              </div>
+            </section>
+          </div>
+
+          <section style="background:#FFFDFB;border:1px solid #EADFD6;border-radius:22px;padding:22px;display:flex;flex-direction:column">
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:26px;margin-bottom:8px">Horario</div>
+            <sc-for list="{{ schedule }}" as="h" hint-placeholder-count="12">
+              <div style="display:flex;align-items:center;gap:14px;min-height:44px;border-bottom:1px solid #F1E9E2">
+                <span style="width:44px;font-size:13px;color:#7A6A65;font-variant-numeric:tabular-nums">{{ h.label }}</span>
+                <input value="{{ h.value }}" onChange="{{ h.onChange }}" style="flex:1;min-width:0;border:none;background:transparent;font-size:15px">
+              </div>
+            </sc-for>
+          </section>
+
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <section style="background:#E3EADF;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:10px">
+              <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:26px">Hábitos de hoy</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <sc-for list="{{ habitsToday }}" as="h" hint-placeholder-count="4">
+                  <button onClick="{{ h.onToggle }}" style="display:flex;align-items:center;gap:8px;min-height:44px;padding:0 16px 0 12px;border-radius:22px;border:1px solid {{ h.border }};background:{{ h.bg }};cursor:pointer;font-size:14px">
+                    <span style="width:12px;height:12px;border-radius:50%;background:{{ h.color }}"></span>{{ h.name }}
+                  </button>
+                </sc-for>
+              </div>
+            </section>
+
+            <section style="background:#FFFDFB;border:1px solid #EADFD6;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline">
+                <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:26px">Agua</div>
+                <div style="font-size:13px;color:#7A6A65">{{ waterLabel }}</div>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <sc-for list="{{ water }}" as="w" hint-placeholder-count="8">
+                  <button onClick="{{ w.onClick }}" style="width:34px;height:44px;border-radius:10px 10px 14px 14px;border:1.5px solid #9FB7C4;background:{{ w.bg }};cursor:pointer;padding:0"></button>
+                </sc-for>
+              </div>
+            </section>
+
+            <section style="background:#FFFDFB;border:1px solid #EADFD6;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:12px">
+              <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:26px">¿Cómo me siento?</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <sc-for list="{{ moods }}" as="m" hint-placeholder-count="5">
+                  <button onClick="{{ m.onClick }}" style="min-height:40px;padding:0 14px;border-radius:20px;border:1px solid {{ m.border }};background:{{ m.bg }};cursor:pointer;font-size:14px">{{ m.label }}</button>
+                </sc-for>
+              </div>
+            </section>
+
+            <section style="background:#FFFDFB;border:1px solid #EADFD6;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:8px">
+              <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:26px">Notas y gratitud</div>
+              <textarea value="{{ note }}" onChange="{{ onNote }}" placeholder="Hoy agradezco…" rows="5" style="width:100%;border:none;resize:vertical;font-size:16px;line-height:32px;background-image:repeating-linear-gradient(transparent 0 31px,#EADFD6 31px 32px);background-color:transparent"></textarea>
+            </section>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSemana }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#A8645F">Semana</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:48px;line-height:1.05">{{ weekTitle }}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button onClick="{{ prevWeek }}" style="width:44px;height:44px;border-radius:50%;border:1px solid #E0D2C8;background:#FFFDFB;cursor:pointer;font-size:18px">‹</button>
+            <button onClick="{{ goToday }}" style="height:44px;padding:0 18px;border-radius:22px;border:1px solid #E0D2C8;background:#FFFDFB;cursor:pointer;font-size:14px">Esta semana</button>
+            <button onClick="{{ nextWeek }}" style="width:44px;height:44px;border-radius:50%;border:1px solid #E0D2C8;background:#FFFDFB;cursor:pointer;font-size:18px">›</button>
+          </div>
+        </header>
+        <div style="display:flex;align-items:center;gap:16px;background:#E7E1EE;border-radius:22px;padding:14px 22px;flex-wrap:wrap">
+          <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:22px">Intención de la semana</span>
+          <input value="{{ weekIntention }}" onChange="{{ onWeekIntention }}" placeholder="Esta semana quiero sentirme…" style="flex:1;min-width:200px;min-height:44px;border:none;background:transparent;font-size:16px">
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px">
+          <sc-for list="{{ weekDays }}" as="d" hint-placeholder-count="7">
+            <section style="background:#FFFDFB;border:1px solid {{ d.border }};border-radius:20px;padding:16px 16px 8px;display:flex;flex-direction:column;gap:2px;min-height:220px">
+              <button onClick="{{ d.onOpen }}" style="display:flex;align-items:baseline;gap:8px;border:none;background:transparent;padding:0 0 8px;cursor:pointer;text-align:left">
+                <span style="font-family:'Cormorant Garamond',serif;font-size:34px;line-height:1;color:{{ d.numColor }}">{{ d.num }}</span>
+                <span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#7A6A65">{{ d.name }}</span>
+              </button>
+              <sc-for list="{{ d.list.items }}" as="t" hint-placeholder-count="1">
+                <div style="display:flex;align-items:center;gap:4px;min-height:40px;border-bottom:1px dashed #EADFD6">
+                  <button onClick="{{ t.onToggle }}" style="width:32px;height:40px;display:flex;align-items:center;border:none;background:transparent;cursor:pointer;padding:0">
+                    <span style="width:20px;height:20px;border-radius:6px;border:1.5px solid {{ t.boxBorder }};background:{{ t.boxBg }};color:#FFFDFB;font-size:12px;display:flex;align-items:center;justify-content:center">{{ t.mark }}</span>
+                  </button>
+                  <input value="{{ t.text }}" onChange="{{ t.onText }}" style="flex:1;min-width:0;border:none;background:transparent;font-size:15px;color:{{ t.textColor }};text-decoration:{{ t.deco }}">
+                  <button onClick="{{ t.onDel }}" style="width:28px;height:40px;border:none;background:transparent;color:#B8A9A3;cursor:pointer">×</button>
+                </div>
+              </sc-for>
+              <input value="{{ d.list.draft }}" onChange="{{ d.list.onDraft }}" onKeyDown="{{ d.list.onKey }}" placeholder="+ añadir" style="min-height:40px;border:none;background:transparent;font-size:15px">
+            </section>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isHabitos }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#A8645F">Tracker de hábitos</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:54px;line-height:1">{{ monthTitle }}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button onClick="{{ prevMonth }}" style="width:44px;height:44px;border-radius:50%;border:1px solid #E0D2C8;background:#FFFDFB;cursor:pointer;font-size:18px">‹</button>
+            <button onClick="{{ nextMonth }}" style="width:44px;height:44px;border-radius:50%;border:1px solid #E0D2C8;background:#FFFDFB;cursor:pointer;font-size:18px">›</button>
+          </div>
+        </header>
+        <section style="background:#FFFDFB;border:1px solid #EADFD6;border-radius:22px;padding:22px;overflow-x:auto">
+          <div style="min-width:900px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:flex-end;gap:10px">
+              <div style="width:190px;flex-shrink:0"></div>
+              <div style="flex:1;display:flex;gap:3px">
+                <sc-for list="{{ monthDays }}" as="md" hint-placeholder-count="30">
+                  <div style="flex:1 1 0;min-width:20px;display:flex;flex-direction:column;align-items:center;font-size:11px;color:{{ md.color }};line-height:1.3">
+                    <span>{{ md.dow }}</span><span style="font-weight:500">{{ md.num }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="width:96px;flex-shrink:0;display:flex;justify-content:space-between;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7A6A65"><span>Mes</span><span>Racha</span></div>
+            </div>
+            <sc-for list="{{ habitRows }}" as="r" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:10px;min-height:44px;border-top:1px solid #F1E9E2">
+                <div style="width:190px;flex-shrink:0;display:flex;align-items:center;gap:8px">
+                  <span style="width:12px;height:12px;border-radius:50%;background:{{ r.color }};flex-shrink:0"></span>
+                  <input value="{{ r.name }}" onChange="{{ r.onName }}" style="flex:1;min-width:0;border:none;background:transparent;font-size:15px">
+                  <button onClick="{{ r.onDel }}" style="width:28px;height:36px;border:none;background:transparent;color:#C9BBB5;cursor:pointer">×</button>
+                </div>
+                <div style="flex:1;display:flex;gap:3px">
+                  <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="30">
+                    <button onClick="{{ c.onClick }}" style="flex:1 1 0;min-width:20px;height:32px;border-radius:8px;border:1.5px solid {{ c.border }};background:{{ c.bg }};cursor:pointer;padding:0"></button>
+                  </sc-for>
+                </div>
+                <div style="width:96px;flex-shrink:0;display:flex;justify-content:space-between;font-size:15px;font-variant-numeric:tabular-nums"><span>{{ r.pct }}</span><span style="color:#A8645F">{{ r.streak }}</span></div>
+              </div>
+            </sc-for>
+            <div style="display:flex;align-items:center;gap:10px;min-height:52px;border-top:1px solid #F1E9E2">
+              <input value="{{ habitDraft }}" onChange="{{ onHabitDraft }}" onKeyDown="{{ onHabitKey }}" placeholder="Nuevo hábito…" style="width:260px;min-height:44px;border:none;background:transparent;font-size:15px">
+              <button onClick="{{ addHabit }}" style="min-height:40px;padding:0 16px;border-radius:20px;border:none;background:#EFE6DD;cursor:pointer;font-size:14px">Añadir hábito</button>
+            </div>
+          </div>
+        </section>
+        <div style="font-size:14px;color:#7A6A65">Toca una casilla para marcar el día. La racha cuenta días seguidos hasta hoy.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPrioridades }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <header style="display:flex;flex-direction:column;gap:2px">
+          <div style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#A8645F">Matriz de prioridades</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:54px;line-height:1">¿Qué importa de verdad?</div>
+          <div style="font-size:14px;color:#7A6A65;margin-top:6px">Vacía tu mente aquí y envía a «Hoy» lo que toca hacer.</div>
+        </header>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px">
+          <sc-for list="{{ quadrants }}" as="q" hint-placeholder-count="4">
+            <section style="background:{{ q.bg }};border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:2px;min-height:260px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+                <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:28px">{{ q.title }}</div>
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6E5F5A">{{ q.sub }}</div>
+              </div>
+              <div style="font-size:13px;color:#6E5F5A;margin-bottom:8px">{{ q.hint }}</div>
+              <sc-for list="{{ q.list.items }}" as="t" hint-placeholder-count="1">
+                <div style="display:flex;align-items:center;gap:6px;min-height:44px;border-bottom:1px solid rgba(58,47,45,.08)">
+                  <button onClick="{{ t.onToggle }}" style="width:36px;height:44px;display:flex;align-items:center;border:none;background:transparent;cursor:pointer;padding:0">
+                    <span style="width:22px;height:22px;border-radius:50%;border:1.5px solid {{ t.boxBorder }};background:{{ t.boxBg }};color:#FFFDFB;font-size:13px;display:flex;align-items:center;justify-content:center">{{ t.mark }}</span>
+                  </button>
+                  <input value="{{ t.text }}" onChange="{{ t.onText }}" style="flex:1;min-width:0;border:none;background:transparent;font-size:16px;color:{{ t.textColor }};text-decoration:{{ t.deco }}">
+                  <button onClick="{{ t.onToday }}" style="min-height:32px;padding:0 10px;border-radius:16px;border:1px solid rgba(58,47,45,.15);background:rgba(255,253,251,.6);cursor:pointer;font-size:12px">→ Hoy</button>
+                  <button onClick="{{ t.onDel }}" style="width:30px;height:44px;border:none;background:transparent;color:#9C8D88;cursor:pointer">×</button>
+                </div>
+              </sc-for>
+              <div style="display:flex;align-items:center;gap:8px;min-height:48px">
+                <input value="{{ q.list.draft }}" onChange="{{ q.list.onDraft }}" onKeyDown="{{ q.list.onKey }}" placeholder="Añadir…" style="flex:1;min-width:0;border:none;background:transparent;font-size:16px">
+                <button onClick="{{ q.list.onAdd }}" style="width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,253,251,.7);cursor:pointer;font-size:18px">+</button>
+              </div>
+            </section>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isMetas }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <header style="display:flex;flex-direction:column;gap:2px">
+          <div style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#A8645F">Metas</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:54px;line-height:1">Lo que estoy construyendo</div>
+        </header>
+        <section style="background:#FFFDFB;border:1px solid #EADFD6;border-radius:22px;padding:18px 22px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <input value="{{ goalDraft }}" onChange="{{ onGoalDraft }}" onKeyDown="{{ onGoalKey }}" placeholder="Nueva meta… (ej. Correr 5 km)" style="flex:1;min-width:220px;min-height:44px;border:none;border-bottom:1px solid #EADFD6;background:transparent;font-size:17px">
+            <button onClick="{{ addGoal }}" style="min-height:44px;padding:0 20px;border-radius:22px;border:none;background:#3A2F2D;color:#FFFDFB;cursor:pointer;font-size:14px">Crear meta</button>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ areas }}" as="a" hint-placeholder-count="6">
+              <button onClick="{{ a.onClick }}" style="min-height:36px;padding:0 14px;border-radius:18px;border:1px solid {{ a.border }};background:{{ a.bg }};cursor:pointer;font-size:13px">{{ a.label }}</button>
+            </sc-for>
+          </div>
+        </section>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;align-items:start">
+          <sc-for list="{{ goals }}" as="g" hint-placeholder-count="2">
+            <section style="background:#FFFDFB;border:1px solid #EADFD6;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+                <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:5px 10px;border-radius:12px;background:{{ g.areaBg }}">{{ g.area }}</span>
+                <button onClick="{{ g.onDel }}" style="width:32px;height:32px;border:none;background:transparent;color:#B8A9A3;cursor:pointer;font-size:18px">×</button>
+              </div>
+              <input value="{{ g.title }}" onChange="{{ g.onTitle }}" style="border:none;background:transparent;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px;line-height:1.1;padding:0">
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#7A6A65">
+                <span>Fecha límite</span>
+                <input type="date" value="{{ g.deadline }}" onChange="{{ g.onDeadline }}" style="border:none;background:#F7F2EC;border-radius:10px;padding:6px 10px;font-size:14px">
+              </div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="flex:1;height:8px;border-radius:4px;background:#F1E9E2;overflow:hidden"><div style="height:100%;width:{{ g.pct }};background:#8FA88B;border-radius:4px"></div></div>
+                <span style="font-size:14px;font-variant-numeric:tabular-nums">{{ g.pct }}</span>
+              </div>
+              <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7A6A65;margin-top:6px">Pasos</div>
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ g.steps.items }}" as="t" hint-placeholder-count="2">
+                  <div style="display:flex;align-items:center;gap:6px;min-height:42px;border-bottom:1px dashed #EADFD6">
+                    <button onClick="{{ t.onToggle }}" style="width:34px;height:42px;display:flex;align-items:center;border:none;background:transparent;cursor:pointer;padding:0">
+                      <span style="width:20px;height:20px;border-radius:50%;border:1.5px solid {{ t.boxBorder }};background:{{ t.boxBg }};color:#FFFDFB;font-size:12px;display:flex;align-items:center;justify-content:center">{{ t.mark }}</span>
+                    </button>
+                    <input value="{{ t.text }}" onChange="{{ t.onText }}" style="flex:1;min-width:0;border:none;background:transparent;font-size:15px;color:{{ t.textColor }};text-decoration:{{ t.deco }}">
+                    <button onClick="{{ t.onDel }}" style="width:28px;height:42px;border:none;background:transparent;color:#B8A9A3;cursor:pointer">×</button>
+                  </div>
+                </sc-for>
+                <input value="{{ g.steps.draft }}" onChange="{{ g.steps.onDraft }}" onKeyDown="{{ g.steps.onKey }}" placeholder="+ añadir paso" style="min-height:42px;border:none;background:transparent;font-size:15px">
+              </div>
+            </section>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;weekStart&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Lunes&quot;,&quot;Domingo&quot;],&quot;default&quot;:&quot;Lunes&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Planner&quot;},&quot;dayStartHour&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:4,&quot;max&quot;:10,&quot;step&quot;:1,&quot;default&quot;:6,&quot;unit&quot;:&quot;h&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Planner&quot;},&quot;hydrationGoal&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:4,&quot;max&quot;:12,&quot;step&quot;:1,&quot;default&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Planner&quot;}}">
+const KEY = 'mi-planner-v1';
+const pad = n => String(n).padStart(2, '0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parse = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d || 1); };
+const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return iso(d); };
+const DOW = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const DOWS = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
+const MES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const uid = () => Math.random().toString(36).slice(2, 9);
+const HCOL = ['#C98B86', '#8FA88B', '#A493B8', '#D6AE6A', '#86A9BC'];
+const AREAS = [['Salud', '#E3EADF'], ['Carrera', '#E7E1EE'], ['Finanzas', '#F5EAD2'], ['Relaciones', '#F4E4E0'], ['Crecimiento', '#E1ECF0'], ['Hogar', '#EFE6DD']];
+const MOODS = ['Radiante', 'Feliz', 'Tranquila', 'Cansada', 'Triste'];
+const blankDay = () => ({ top3: [{ text: '', done: false }, { text: '', done: false }, { text: '', done: false }], tasks: [], water: 0, mood: -1, note: '', sched: {} });
+const it = t => ({ id: uid(), text: t, done: false });
+const seed = () => ({
+  habits: [
+    { id: 'h1', name: 'Beber 2 L de agua', color: 0 }, { id: 'h2', name: 'Leer 20 min', color: 1 },
+    { id: 'h3', name: 'Moverme 30 min', color: 2 }, { id: 'h4', name: 'Meditar', color: 3 }, { id: 'h5', name: 'Sin pantallas 22 h', color: 4 }
+  ],
+  log: {}, days: {}, weeks: {},
+  matrix: { q1: [], q2: [], q3: [], q4: [] },
+  goals: [{ id: 'g1', title: 'Leer 12 libros', area: 'Crecimiento', deadline: '2026-12-31', steps: [it('Elegir lista de libros'), it('Leer 20 min cada noche'), it('Terminar el primero')] }]
+});
+
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    let data = null;
+    try { data = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+    const t = iso(new Date());
+    this.state = { data: data || seed(), tab: 'hoy', sel: t, month: t.slice(0, 7), drafts: {}, newArea: 'Crecimiento' };
+    this.fileRef = React.createRef();
+  }
+  componentDidUpdate(pp, ps) {
+    if (ps.data !== this.state.data) { try { localStorage.setItem(KEY, JSON.stringify(this.state.data)); } catch (e) {} }
+  }
+  setData(fn) { this.setState(s => { const d = JSON.parse(JSON.stringify(s.data)); fn(d); return { data: d }; }); }
+  dayOf(d, k) { if (!d.days[k]) d.days[k] = blankDay(); return d.days[k]; }
+  viewDay(k) { return this.state.data.days[k] || blankDay(); }
+  setDraft(k, v) { this.setState(s => ({ drafts: { ...s.drafts, [k]: v } })); }
+  chk(done) {
+    return { boxBg: done ? '#A8645F' : 'transparent', boxBorder: done ? '#A8645F' : '#CFB2AC', mark: done ? '✓' : '', textColor: done ? '#A99B96' : '#3A2F2D', deco: done ? 'line-through' : 'none' };
+  }
+  list(key, get, withToday) {
+    const arr = get(this.state.data, false) || [];
+    const today = iso(new Date());
+    const items = arr.map((x, i) => ({
+      text: x.text, ...this.chk(x.done),
+      onToggle: () => this.setData(d => { const a = get(d, true); a[i].done = !a[i].done; }),
+      onDel: () => this.setData(d => { get(d, true).splice(i, 1); }),
+      onText: e => { const v = e.target.value; this.setData(d => { get(d, true)[i].text = v; }); },
+      onToday: withToday ? () => this.setData(d => { const a = get(d, true); const [m] = a.splice(i, 1); this.dayOf(d, today).tasks.push(m); }) : null
+    }));
+    const add = () => {
+      const v = (this.state.drafts[key] || '').trim(); if (!v) return;
+      this.setData(d => { get(d, true).push(it(v)); });
+      this.setDraft(key, '');
+    };
+    return { items, draft: this.state.drafts[key] || '', onDraft: e => this.setDraft(key, e.target.value), onKey: e => { if (e.key === 'Enter') add(); }, onAdd: add };
+  }
+
+  renderVals() {
+    const { data, tab, sel, month, drafts, newArea } = this.state;
+    const todayIso = iso(new Date());
+    const hydration = this.props.hydrationGoal ?? 8;
+    const startH = this.props.dayStartHour ?? 6;
+    const weekStart = this.props.weekStart ?? 'Lunes';
+    const go = t => () => this.setState({ tab: t });
+    const tabs = [['hoy', 'Hoy', '#C98B86'], ['semana', 'Semana', '#A493B8'], ['habitos', 'Hábitos', '#8FA88B'], ['prioridades', 'Prioridades', '#D6AE6A'], ['metas', 'Metas', '#86A9BC']];
+    const nav = tabs.map(([k, l, c]) => ({ label: l, dot: c, bg: tab === k ? '#FFFDFB' : 'transparent', onClick: go(k) }));
+
+    // Hoy
+    const sd = parse(sel), day = this.viewDay(sel);
+    const upd = fn => this.setData(d => fn(this.dayOf(d, sel)));
+    const top3 = day.top3.map((t, i) => ({
+      num: i + 1, text: t.text, ...this.chk(t.done),
+      onText: e => { const v = e.target.value; upd(x => { x.top3[i].text = v; }); },
+      onToggle: () => upd(x => { x.top3[i].done = !x.top3[i].done; })
+    }));
+    const tasks = this.list('t-' + sel, (d, c) => c ? this.dayOf(d, sel).tasks : (d.days[sel] || {}).tasks);
+    const all = day.top3.filter(t => t.text.trim()).concat(day.tasks);
+    const dayPct = all.length ? Math.round(all.filter(t => t.done).length / all.length * 100) + '%' : '0%';
+    const schedule = Array.from({ length: 17 }, (_, i) => {
+      const h = pad((startH + i) % 24) + ':00';
+      return { label: h, value: day.sched[h] || '', onChange: e => { const v = e.target.value; upd(x => { x.sched[h] = v; }); } };
+    });
+    const habitsToday = data.habits.map(h => {
+      const done = !!(data.log[h.id] || {})[sel];
+      return { name: h.name, color: HCOL[h.color % 5], bg: done ? '#FFFDFB' : 'transparent', border: done ? '#8FA88B' : '#C9D5C4', onToggle: () => this.setData(d => { d.log[h.id] = d.log[h.id] || {}; d.log[h.id][sel] = !d.log[h.id][sel]; }) };
+    });
+    const water = Array.from({ length: hydration }, (_, i) => ({ bg: i < day.water ? '#BFD3DD' : 'transparent', onClick: () => upd(x => { x.water = x.water === i + 1 ? i : i + 1; }) }));
+    const moods = MOODS.map((m, i) => ({ label: m, bg: day.mood === i ? '#F4E4E0' : 'transparent', border: day.mood === i ? '#C98B86' : '#EADFD6', onClick: () => upd(x => { x.mood = x.mood === i ? -1 : i; }) }));
+    const diff = Math.round((parse(sel) - parse(todayIso)) / 864e5);
+    const dayKicker = diff === 0 ? 'Hoy' : diff === 1 ? 'Mañana' : diff === -1 ? 'Ayer' : DOW[sd.getDay()];
+
+    // Semana
+    const dow = sd.getDay();
+    const ws = addDays(sel, -(weekStart === 'Lunes' ? (dow + 6) % 7 : dow));
+    const we = addDays(ws, 6), wsd = parse(ws), wed = parse(we);
+    const weekTitle = wsd.getMonth() === wed.getMonth() ? `${wsd.getDate()} – ${wed.getDate()} ${MES[wed.getMonth()]}` : `${wsd.getDate()} ${MES[wsd.getMonth()].slice(0, 3)} – ${wed.getDate()} ${MES[wed.getMonth()].slice(0, 3)}`;
+    const weekDays = Array.from({ length: 7 }, (_, i) => {
+      const k = addDays(ws, i), dd = parse(k), isT = k === todayIso;
+      return {
+        num: dd.getDate(), name: DOW[dd.getDay()], border: isT ? '#C98B86' : '#EADFD6', numColor: isT ? '#A8645F' : '#3A2F2D',
+        onOpen: () => this.setState({ sel: k, tab: 'hoy' }),
+        list: this.list('t-' + k, (d, c) => c ? this.dayOf(d, k).tasks : (d.days[k] || {}).tasks)
+      };
+    });
+
+    // Hábitos
+    const [my, mm] = month.split('-').map(Number);
+    const dim = new Date(my, mm, 0).getDate();
+    const mKeys = Array.from({ length: dim }, (_, i) => `${month}-${pad(i + 1)}`);
+    const monthDays = mKeys.map(k => ({ num: parse(k).getDate(), dow: DOWS[parse(k).getDay()], color: k === todayIso ? '#A8645F' : '#7A6A65' }));
+    const elapsed = mKeys.filter(k => k <= todayIso).length || dim;
+    const habitRows = data.habits.map((h, hi) => {
+      const lg = data.log[h.id] || {}, col = HCOL[h.color % 5];
+      let s = 0, k = lg[todayIso] ? todayIso : addDays(todayIso, -1);
+      while (lg[k]) { s++; k = addDays(k, -1); }
+      const cnt = mKeys.filter(k => lg[k]).length;
+      return {
+        name: h.name, color: col, streak: s ? s + ' d' : '—',
+        pct: Math.round(cnt / (month === todayIso.slice(0, 7) ? elapsed : dim) * 100) + '%',
+        onName: e => { const v = e.target.value; this.setData(d => { d.habits[hi].name = v; }); },
+        onDel: () => this.setData(d => { d.habits.splice(hi, 1); delete d.log[h.id]; }),
+        cells: mKeys.map(k => ({ bg: lg[k] ? col : '#F4EDE7', border: k === todayIso ? '#3A2F2D' : (lg[k] ? col : '#F4EDE7'), onClick: () => this.setData(d => { d.log[h.id] = d.log[h.id] || {}; d.log[h.id][k] = !d.log[h.id][k]; }) }))
+      };
+    });
+    const addHabit = () => {
+      const v = (drafts.habit || '').trim(); if (!v) return;
+      this.setData(d => { d.habits.push({ id: uid(), name: v, color: d.habits.length % 5 }); });
+      this.setDraft('habit', '');
+    };
+    const shiftMonth = n => () => { const d = new Date(my, mm - 1 + n, 1); this.setState({ month: iso(d).slice(0, 7) }); };
+
+    // Prioridades
+    const Q = [['q1', 'Hacer ya', 'Urgente · Importante', 'Crisis, fechas límite, lo que no puede esperar.', '#F4E4E0'],
+      ['q2', 'Planificar', 'Importante · No urgente', 'Metas, salud, relaciones. Aquí crece tu vida.', '#E3EADF'],
+      ['q3', 'Delegar', 'Urgente · No importante', 'Interrupciones y favores. ¿Quién más puede hacerlo?', '#F5EAD2'],
+      ['q4', 'Soltar', 'Ni urgente ni importante', 'Distracciones. Suéltalas sin culpa.', '#E7E1EE']];
+    const quadrants = Q.map(([k, title, sub, hint, bg]) => ({ title, sub, hint, bg, list: this.list('m-' + k, d => d.matrix[k], true) }));
+
+    // Metas
+    const goals = data.goals.map((g, gi) => {
+      const done = g.steps.filter(s => s.done).length;
+      const area = AREAS.find(a => a[0] === g.area) || AREAS[5];
+      return {
+        title: g.title, area: g.area, areaBg: area[1], deadline: g.deadline || '',
+        pct: (g.steps.length ? Math.round(done / g.steps.length * 100) : 0) + '%',
+        onTitle: e => { const v = e.target.value; this.setData(d => { d.goals[gi].title = v; }); },
+        onDeadline: e => { const v = e.target.value; this.setData(d => { d.goals[gi].deadline = v; }); },
+        onDel: () => this.setData(d => { d.goals.splice(gi, 1); }),
+        steps: this.list('g-' + g.id, d => (d.goals.find(x => x.id === g.id) || {}).steps)
+      };
+    });
+    const areas = AREAS.map(([l, c]) => ({ label: l, bg: newArea === l ? c : 'transparent', border: newArea === l ? '#B8A9A3' : '#EADFD6', onClick: () => this.setState({ newArea: l }) }));
+    const addGoal = () => {
+      const v = (drafts.goal || '').trim(); if (!v) return;
+      this.setData(d => { d.goals.unshift({ id: uid(), title: v, area: newArea, deadline: '', steps: [] }); });
+      this.setDraft('goal', '');
+    };
+
+    return {
+      nav, yearLabel: 'Planner ' + sd.getFullYear(),
+      isHoy: tab === 'hoy', isSemana: tab === 'semana', isHabitos: tab === 'habitos', isPrioridades: tab === 'prioridades', isMetas: tab === 'metas',
+      dayKicker, dayTitle: cap(DOW[sd.getDay()]) + ' ' + sd.getDate(), daySub: MES[sd.getMonth()] + ' ' + sd.getFullYear(), dayPct,
+      prevDay: () => this.setState({ sel: addDays(sel, -1) }), nextDay: () => this.setState({ sel: addDays(sel, 1) }),
+      goToday: () => this.setState({ sel: todayIso }),
+      top3, tasks, schedule, habitsToday, water, waterLabel: `${day.water} / ${hydration} vasos`, moods,
+      note: day.note, onNote: e => { const v = e.target.value; upd(x => { x.note = v; }); },
+      weekTitle, weekDays, prevWeek: () => this.setState({ sel: addDays(sel, -7) }), nextWeek: () => this.setState({ sel: addDays(sel, 7) }),
+      weekIntention: data.weeks[ws] || '', onWeekIntention: e => { const v = e.target.value; this.setData(d => { d.weeks[ws] = v; }); },
+      monthTitle: cap(MES[mm - 1]) + ' ' + my, monthDays, habitRows, prevMonth: shiftMonth(-1), nextMonth: shiftMonth(1),
+      habitDraft: drafts.habit || '', onHabitDraft: e => this.setDraft('habit', e.target.value), onHabitKey: e => { if (e.key === 'Enter') addHabit(); }, addHabit,
+      quadrants, goals, areas, addGoal,
+      goalDraft: drafts.goal || '', onGoalDraft: e => this.setDraft('goal', e.target.value), onGoalKey: e => { if (e.key === 'Enter') addGoal(); },
+      fileRef: this.fileRef,
+      onExport: () => {
+        const b = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `mi-planner-${todayIso}.json`; a.click();
+      },
+      onImportClick: () => this.fileRef.current && this.fileRef.current.click(),
+      onImport: e => {
+        const f = e.target.files[0]; if (!f) return;
+        f.text().then(t => { try { const d = JSON.parse(t); if (d.habits && d.days) this.setState({ data: d }); } catch (err) {} });
+        e.target.value = '';
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

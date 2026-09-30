@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="./doc-page.js"></script>
+<style>
+doc-page:not(:defined){visibility:hidden}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;color:#3A2F2D;font-family:'Jost',sans-serif}
+a{color:#3A2F2D;text-decoration:none}a:hover{color:#A8645F}
+</style>
+</helmet>
+
+<doc-page width="7.5in" height="10in">
+<sc-for list="{{ pages }}" as="p" hint-placeholder-count="3">
+<section class="page" id="{{ p.id }}" data-screen-label="{{ p.label }}" style="position:relative;background:#F7F2EC;overflow:hidden">
+<div style="position:absolute;inset:0;display:flex;font-family:'Jost',sans-serif;color:#3A2F2D">
+<div style="flex:1;min-width:0;padding:22px 24px 26px 32px;display:flex;flex-direction:column;gap:14px">
+
+  <sc-if value="{{ p.hasNav }}" hint-placeholder-val="{{ false }}">
+    <nav style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7A6A65;padding-bottom:10px;border-bottom:1px solid #E6DAD0">
+      <sc-for list="{{ topNav }}" as="n" hint-placeholder-count="7"><a href="{{ n.href }}" style="color:#7A6A65">{{ n.label }}</a></sc-for>
+    </nav>
+  </sc-if>
+
+  <!-- PORTADA -->
+  <sc-if value="{{ p.isCover }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;margin:12px;border:1px solid #D9C4BB;border-radius:260px 260px 24px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:40px">
+      <div style="font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#A8645F">Planner</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:92px;line-height:.95">Mi Planner</div>
+      <div style="width:60px;height:1px;background:#C98B86"></div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#7A6A65">Octubre 2026 — Diciembre 2027</div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:center;margin-top:60px">
+        <div style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#7A6A65">Este planner pertenece a</div>
+        <div style="width:280px;height:34px;border-bottom:1px solid #C9B6AC"></div>
+      </div>
+      <a href="#indice" style="margin-top:40px;padding:12px 28px;border-radius:24px;background:#3A2F2D;color:#FFFDFB;font-size:14px;letter-spacing:.08em">Empezar →</a>
+    </div>
+  </sc-if>
+
+  <!-- ÍNDICE -->
+  <sc-if value="{{ p.isIndex }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#A8645F">Índice</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:48px;line-height:1">Todo en un toque</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+      <sc-for list="{{ indexMain }}" as="n" hint-placeholder-count="6">
+        <a href="{{ n.href }}" style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:2px">
+          <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:21px">{{ n.label }}</span>
+          <span style="font-size:11px;color:#7A6A65">{{ n.sub }}</span>
+        </a>
+      </sc-for>
+    </div>
+    <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:18px;padding:8px 18px;display:flex;flex-direction:column">
+      <sc-for list="{{ indexMonths }}" as="m" hint-placeholder-count="15">
+        <div style="display:flex;align-items:center;gap:10px;min-height:30px;border-bottom:1px solid #F1E9E2">
+          <a href="{{ m.href }}" style="flex:1;font-family:'Cormorant Garamond',serif;font-size:19px">{{ m.label }}</a>
+          <a href="{{ m.h }}" style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7A6A65;padding:4px 8px">Hábitos</a>
+          <a href="{{ m.a }}" style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7A6A65;padding:4px 8px">Ánimo</a>
+          <a href="{{ m.f }}" style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7A6A65;padding:4px 8px">Finanzas</a>
+        </div>
+      </sc-for>
+    </div>
+    <div style="background:#F4E4E0;border-radius:18px;padding:14px 18px;font-size:12px;line-height:1.55;color:#5E4E4A;text-wrap:pretty">Importa este PDF en GoodNotes o Notability. Las pestañas y los enlaces funcionan en modo lectura (o tocando con el dedo). Duplica las páginas «Diario» y «Notas» tantas veces como necesites.</div>
+  </sc-if>
+
+  <!-- AÑO -->
+  <sc-if value="{{ p.isYear }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#A8645F">Vista anual</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:44px;line-height:1">Oct 2026 — Dic 2027</div>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 14px">
+      <sc-for list="{{ minis }}" as="m" hint-placeholder-count="15">
+        <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:8px 10px;display:flex;flex-direction:column;gap:4px">
+          <a href="{{ m.href }}" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:17px">{{ m.label }}</a>
+          <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;text-align:center">
+            <sc-for list="{{ dowHead }}" as="h" hint-placeholder-count="7"><span style="font-size:8px;color:#A99B96">{{ h }}</span></sc-for>
+            <sc-for list="{{ m.cells }}" as="c" hint-placeholder-count="30"><a href="{{ c.href }}" style="font-size:9.5px;line-height:15px;color:{{ c.color }}">{{ c.num }}</a></sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <!-- METAS -->
+  <sc-if value="{{ p.isGoals }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#A8645F">Metas</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:44px;line-height:1">Lo que estoy construyendo</div>
+    </div>
+    <div style="background:#F4E4E0;border-radius:18px;padding:12px 18px;display:flex;flex-direction:column;gap:4px">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:21px">Mi visión para 2027</div>
+      <div style="height:84px;background-image:repeating-linear-gradient(transparent 0 27px,#E3C9C2 27px 28px)"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+      <sc-for list="{{ areas }}" as="a" hint-placeholder-count="6">
+        <div style="background:{{ a.bg }};border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:2px">
+          <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#5E4E4A">{{ a.label }}</div>
+          <div style="height:84px;background-image:repeating-linear-gradient(transparent 0 27px,rgba(58,47,45,.14) 27px 28px)"></div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:10px">
+      <sc-for list="{{ quarters }}" as="q" hint-placeholder-count="6">
+        <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:4px">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:19px">{{ q }}</div>
+          <sc-for list="{{ three }}" as="x" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:8px;height:27px;border-bottom:1px solid #EDE3DA"><span style="width:12px;height:12px;border-radius:50%;border:1.3px solid #C9B6AC;flex-shrink:0"></span></div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <!-- MI PLAN -->
+  <sc-if value="{{ p.isPlan }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#A8645F">Mi plan de estabilidad</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:44px;line-height:1">Lo que sé de mí</div>
+      <div style="font-size:12px;color:#7A6A65;margin-top:4px">Rellénalo en un día estable, idealmente con tu psiquiatra o terapeuta.</div>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:20px">Medicación</div>
+          <div style="display:flex;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#7A6A65;padding:4px 0"><span style="flex:2">Nombre</span><span style="flex:1">Dosis</span><span style="width:52px">Hora</span></div>
+          <sc-for list="{{ four }}" as="x" hint-placeholder-count="4"><div style="height:28px;border-bottom:1px solid #EDE3DA"></div></sc-for>
+        </div>
+        <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:20px">Rutina ancla</div>
+          <div style="font-size:11px;color:#7A6A65;margin-bottom:4px">Las mismas horas cada día.</div>
+          <sc-for list="{{ anchors }}" as="a" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:10px;height:28px;border-bottom:1px solid #EDE3DA"><span style="width:52px;font-size:11px;color:#A99B96;border-right:1px solid #EDE3DA;height:100%;display:flex;align-items:center">__:__</span><span style="font-size:13px">{{ a }}</span></div>
+          </sc-for>
+        </div>
+        <div style="flex:1;background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:20px">Mi red de apoyo</div>
+          <div style="display:flex;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#7A6A65;padding:4px 0"><span style="flex:1">Nombre</span><span style="flex:1">Teléfono</span></div>
+          <sc-for list="{{ four }}" as="x" hint-placeholder-count="4"><div style="height:28px;border-bottom:1px solid #EDE3DA"></div></sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ signs }}" as="s" hint-placeholder-count="3">
+          <div style="flex:1;background:{{ s.bg }};border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:2px">
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:20px">{{ s.title }}</div>
+            <div style="font-size:11px;color:#5E4E4A">{{ s.hint }}</div>
+            <div style="flex:1;background-image:repeating-linear-gradient(transparent 0 27px,rgba(58,47,45,.14) 27px 28px)"></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#7A6A65;text-wrap:pretty">Este planner te ayuda a organizarte y ver tus patrones. No sustituye a tu equipo de salud. Si estás en crisis, llama a tu contacto de apoyo o al número de emergencias de tu país.</div>
+  </sc-if>
+
+  <!-- TIPS -->
+  <sc-if value="{{ p.isTips }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#A8645F">Equilibrio</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:44px;line-height:1">Tips para mantener la estabilidad</div>
+    </div>
+    <div style="display:flex;flex-direction:column">
+      <sc-for list="{{ tips }}" as="t" hint-placeholder-count="8">
+        <div style="display:flex;gap:16px;padding:11px 0;border-bottom:1px solid #E6DAD0">
+          <span style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#A8645F;line-height:1;width:28px">{{ t.n }}</span>
+          <span style="font-size:13.5px;line-height:1.5;text-wrap:pretty">{{ t.text }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="flex:1;background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:2px">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:20px">Preguntas para mi próxima cita</div>
+      <div style="flex:1;background-image:repeating-linear-gradient(transparent 0 27px,#EDE3DA 27px 28px)"></div>
+    </div>
+  </sc-if>
+
+  <!-- PRIORIDADES -->
+  <sc-if value="{{ p.isMatrix }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#A8645F">Matriz de prioridades</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:44px;line-height:1">¿Qué importa de verdad?</div>
+      <div style="font-size:12px;color:#7A6A65;margin-top:4px">Duplica esta página cada semana o cuando sientas la mente llena.</div>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:10px">
+      <sc-for list="{{ quadrants }}" as="q" hint-placeholder-count="4">
+        <div style="background:{{ q.bg }};border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:2px">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:24px">{{ q.title }}</div>
+          <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#5E4E4A">{{ q.sub }}</div>
+          <div style="flex:1;margin-top:6px;background-image:repeating-linear-gradient(transparent 0 29px,rgba(58,47,45,.14) 29px 30px)"></div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <!-- MES -->
+  <sc-if value="{{ p.isMonth }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#A8645F">{{ p.year }}</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:56px;line-height:1">{{ p.title }}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <sc-for list="{{ p.subLinks }}" as="l" hint-placeholder-count="3"><a href="{{ l.href }}" style="padding:6px 12px;border-radius:14px;border:1px solid #E0D2C8;background:#FFFDFB;font-size:11px;letter-spacing:.08em;text-transform:uppercase">{{ l.label }}</a></sc-for>
+      </div>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:auto;grid-auto-rows:1fr;gap:4px">
+      <sc-for list="{{ dowHeadLong }}" as="h" hint-placeholder-count="7"><div style="text-align:center;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7A6A65;padding-bottom:2px">{{ h }}</div></sc-for>
+      <sc-for list="{{ p.cells }}" as="c" hint-placeholder-count="35">
+        <div style="background:{{ c.bg }};border:1px solid {{ c.border }};border-radius:10px;padding:4px 6px;display:flex;justify-content:space-between;align-items:flex-start">
+          <a href="{{ c.href }}" style="font-family:'Cormorant Garamond',serif;font-size:18px;line-height:1">{{ c.num }}</a>
+          <span style="width:9px;height:9px;border-radius:50%;border:1px solid {{ c.dot }};margin-top:3px"></span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+      <div style="background:#F4E4E0;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:2px">
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:19px">Enfoque del mes</div>
+        <sc-for list="{{ three }}" as="x" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:8px;height:27px;border-bottom:1px solid #E3C9C2"><span style="font-family:'Cormorant Garamond',serif;font-size:16px;color:#A8645F">{{ x }}</span></div></sc-for>
+      </div>
+      <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:6px">
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:19px">Semanas</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ p.weekLinks }}" as="w" hint-placeholder-count="5"><a href="{{ w.href }}" style="padding:6px 10px;border-radius:12px;background:#F7F2EC;font-size:12px">{{ w.label }}</a></sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- HÁBITOS -->
+  <sc-if value="{{ p.isHabits }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#A8645F">Hábitos · {{ p.year }}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:48px;line-height:1">{{ p.title }}</div>
+    </div>
+    <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:flex-end;height:26px">
+        <div style="width:118px;flex-shrink:0"></div>
+        <sc-for list="{{ p.days }}" as="d" hint-placeholder-count="30"><div style="flex:1 1 0;min-width:0;text-align:center;font-size:7.5px;line-height:1.25;color:{{ d.color }}">{{ d.dow }}<br>{{ d.num }}</div></sc-for>
+      </div>
+      <sc-for list="{{ habits }}" as="h" hint-placeholder-count="12">
+        <div style="display:flex;align-items:center;height:31px;border-top:1px solid #F1E9E2">
+          <div style="width:118px;flex-shrink:0;font-size:11.5px;padding-right:6px;white-space:nowrap;overflow:hidden">{{ h }}</div>
+          <sc-for list="{{ p.days }}" as="d" hint-placeholder-count="30"><div style="flex:1 1 0;min-width:0;display:flex;justify-content:center"><span style="width:11px;height:11px;border-radius:50%;border:1.2px solid #D9C4BB;background:{{ d.bg }}"></span></div></sc-for>
+        </div>
+      </sc-for>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+      <div style="background:#F4E4E0;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:2px">
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:19px">Lo que funcionó</div>
+        <div style="flex:1;background-image:repeating-linear-gradient(transparent 0 27px,#E3C9C2 27px 28px)"></div>
+      </div>
+      <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:2px">
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:19px">Para el próximo mes</div>
+        <div style="flex:1;background-image:repeating-linear-gradient(transparent 0 27px,#EDE3DA 27px 28px)"></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ÁNIMO -->
+  <sc-if value="{{ p.isMood }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#A8645F">Ánimo y bienestar · {{ p.year }}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:48px;line-height:1">{{ p.title }}</div>
+    </div>
+    <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:flex-end;height:26px">
+        <div style="width:96px;flex-shrink:0"></div>
+        <sc-for list="{{ p.days }}" as="d" hint-placeholder-count="30"><div style="flex:1 1 0;min-width:0;text-align:center;font-size:7.5px;line-height:1.25;color:{{ d.color }}">{{ d.dow }}<br>{{ d.num }}</div></sc-for>
+      </div>
+      <sc-for list="{{ moodRows }}" as="r" hint-placeholder-count="7">
+        <div style="display:flex;align-items:center;height:22px;background:{{ r.tint }}">
+          <div style="width:96px;flex-shrink:0;font-size:10.5px;padding-left:6px;display:flex;gap:6px;align-items:center"><span style="width:18px;font-variant-numeric:tabular-nums">{{ r.n }}</span><span style="color:#5E4E4A">{{ r.label }}</span></div>
+          <sc-for list="{{ p.days }}" as="d" hint-placeholder-count="30"><div style="flex:1 1 0;min-width:0;display:flex;justify-content:center"><span style="width:10px;height:10px;border-radius:50%;border:1.2px solid {{ r.c }};background:#FFFDFB"></span></div></sc-for>
+        </div>
+      </sc-for>
+      <div style="height:8px"></div>
+      <sc-for list="{{ wellRows }}" as="r" hint-placeholder-count="7">
+        <div style="display:flex;align-items:center;height:25px;border-top:1px solid #F1E9E2">
+          <div style="width:96px;flex-shrink:0;font-size:10.5px;padding-left:6px">{{ r }}</div>
+          <sc-for list="{{ p.days }}" as="d" hint-placeholder-count="30"><div style="flex:1 1 0;min-width:0;height:100%;border-left:1px solid #F4EDE7"></div></sc-for>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font-size:10.5px;color:#7A6A65">Sueño: escribe las horas. Medicación, regla, ejercicio y skincare: marca con un punto. Energía y ansiedad: 0 a 3.</div>
+    <div style="flex:1;background:#F4E4E0;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:2px">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:19px">Patrones que noto · para mi consulta</div>
+      <div style="flex:1;background-image:repeating-linear-gradient(transparent 0 27px,#E3C9C2 27px 28px)"></div>
+    </div>
+  </sc-if>
+
+  <!-- FINANZAS -->
+  <sc-if value="{{ p.isFin }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#A8645F">Finanzas · {{ p.year }}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:48px;line-height:1">{{ p.title }}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+      <sc-for list="{{ finBoxes }}" as="b" hint-placeholder-count="3">
+        <div style="background:{{ b.bg }};border-radius:14px;padding:10px 14px;height:70px;display:flex;flex-direction:column;justify-content:space-between">
+          <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#5E4E4A">{{ b.label }}</div>
+          <div style="height:1px;background:rgba(58,47,45,.15)"></div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:19px">Presupuesto</div>
+          <div style="display:flex;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#7A6A65;padding:4px 0"><span style="flex:1">Categoría</span><span style="width:62px">Límite</span><span style="width:62px">Gastado</span></div>
+          <sc-for list="{{ cats }}" as="c" hint-placeholder-count="8">
+            <div style="display:flex;align-items:center;height:27px;border-bottom:1px solid #EDE3DA;font-size:12px"><span style="flex:1">{{ c }}</span><span style="width:62px;height:100%;border-left:1px solid #EDE3DA"></span><span style="width:62px;height:100%;border-left:1px solid #EDE3DA"></span></div>
+          </sc-for>
+        </div>
+        <div style="flex:1;background:#F5EAD2;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:8px">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:19px">Metas de ahorro</div>
+          <sc-for list="{{ savingsRows }}" as="s" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="height:22px;border-bottom:1px solid rgba(58,47,45,.15);font-size:10px;color:#7A6A65;display:flex;align-items:flex-end;justify-content:flex-end">meta: ________</div>
+              <div style="display:flex;gap:3px"><sc-for list="{{ ten }}" as="x" hint-placeholder-count="10"><span style="flex:1;height:12px;border-radius:3px;border:1px solid #D6BE92;background:#FFFDFB"></span></sc-for></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:19px">Pagos y suscripciones</div>
+          <div style="display:flex;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#7A6A65;padding:4px 0 4px 22px"><span style="flex:1">Pago</span><span style="width:34px">Día</span><span style="width:56px">Monto</span></div>
+          <sc-for list="{{ eight }}" as="x" hint-placeholder-count="8">
+            <div style="display:flex;align-items:center;gap:10px;height:27px;border-bottom:1px solid #EDE3DA"><span style="width:12px;height:12px;border-radius:50%;border:1.3px solid #C9B6AC"></span><span style="flex:1"></span><span style="width:34px;height:100%;border-left:1px solid #EDE3DA"></span><span style="width:56px;height:100%;border-left:1px solid #EDE3DA"></span></div>
+          </sc-for>
+        </div>
+        <div style="flex:1;background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:19px">Gastos extra</div>
+          <div style="flex:1;background-image:repeating-linear-gradient(transparent 0 26px,#EDE3DA 26px 27px)"></div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- SEMANA -->
+  <sc-if value="{{ p.isWeek }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#A8645F">Semana {{ p.wn }}</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:40px;line-height:1">{{ p.title }}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <a href="{{ p.prev }}" style="width:32px;height:32px;border-radius:50%;border:1px solid #E0D2C8;background:#FFFDFB;display:flex;align-items:center;justify-content:center;font-size:15px">‹</a>
+        <a href="{{ p.next }}" style="width:32px;height:32px;border-radius:50%;border:1px solid #E0D2C8;background:#FFFDFB;display:flex;align-items:center;justify-content:center;font-size:15px">›</a>
+      </div>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:8px">
+      <sc-for list="{{ p.wdays }}" as="d" hint-placeholder-count="7">
+        <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:8px 12px;display:flex;flex-direction:column;gap:2px">
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <a href="{{ d.href }}" style="font-family:'Cormorant Garamond',serif;font-size:24px;line-height:1;color:{{ d.numColor }}">{{ d.num }}</a>
+            <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7A6A65">{{ d.name }}</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column">
+            <sc-for list="{{ four }}" as="x" hint-placeholder-count="4"><div style="flex:1;display:flex;align-items:center;gap:8px;border-bottom:1px solid #F1E9E2"><span style="width:10px;height:10px;border-radius:3px;border:1.2px solid #D9C4BB"></span></div></sc-for>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;padding-top:4px;font-size:9px;color:#7A6A65;letter-spacing:.06em">
+            <span style="margin-right:2px">ÁNIMO</span>
+            <sc-for list="{{ moodDots }}" as="m" hint-placeholder-count="7"><span style="width:9px;height:9px;border-radius:50%;border:1.2px solid {{ m }}"></span></sc-for>
+            <span style="margin-left:auto">SUEÑO ___ h</span>
+            <span style="margin-left:6px">MED</span><span style="width:9px;height:9px;border-radius:50%;border:1.2px solid #9DB39A"></span>
+          </div>
+        </div>
+      </sc-for>
+      <div style="background:#F4E4E0;border-radius:14px;padding:8px 12px;display:flex;flex-direction:column;gap:2px">
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:19px">Top 3 de la semana</div>
+        <sc-for list="{{ three }}" as="x" hint-placeholder-count="3"><div style="flex:1;display:flex;align-items:center;gap:8px;border-bottom:1px solid #E3C9C2"><span style="font-family:'Cormorant Garamond',serif;font-size:15px;color:#A8645F">{{ x }}</span></div></sc-for>
+        <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#5E4E4A;padding-top:6px">Intención</div>
+        <div style="flex:1;border-bottom:1px solid #E3C9C2"></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- DIARIO -->
+  <sc-if value="{{ p.isDaily }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#A8645F">Diario</div>
+        <div style="display:flex;align-items:flex-end;gap:10px"><span style="font-family:'Cormorant Garamond',serif;font-size:32px;line-height:1">Fecha</span><span style="width:170px;border-bottom:1px solid #C9B6AC;height:28px"></span></div>
+      </div>
+      <div style="display:flex;gap:5px">
+        <sc-for list="{{ dowHeadLong }}" as="h" hint-placeholder-count="7"><span style="width:24px;height:24px;border-radius:50%;border:1px solid #D9C4BB;display:flex;align-items:center;justify-content:center;font-size:10px;color:#7A6A65">{{ h }}</span></sc-for>
+      </div>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:10px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:#F4E4E0;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:20px">Mis 3 prioridades</div>
+          <sc-for list="{{ three }}" as="x" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:8px;height:30px;border-bottom:1px solid #E3C9C2"><span style="font-family:'Cormorant Garamond',serif;font-size:16px;color:#A8645F;flex:1">{{ x }}</span><span style="width:13px;height:13px;border-radius:50%;border:1.3px solid #C98B86"></span></div></sc-for>
+        </div>
+        <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:20px">Pendientes</div>
+          <sc-for list="{{ eight }}" as="x" hint-placeholder-count="8"><div style="display:flex;align-items:center;gap:8px;height:27px;border-bottom:1px dashed #EDE3DA"><span style="width:11px;height:11px;border-radius:3px;border:1.2px solid #D9C4BB"></span></div></sc-for>
+        </div>
+        <div style="background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:20px">Check-in</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7A6A65">Ánimo</div>
+            <div style="display:flex;gap:4px">
+              <sc-for list="{{ moodScale }}" as="m" hint-placeholder-count="7"><span style="flex:1;height:26px;border-radius:8px;border:1.5px solid {{ m.c }};display:flex;align-items:center;justify-content:center;font-size:11px">{{ m.n }}</span></sc-for>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px;font-size:11.5px">
+            <span>Sueño ____ h</span><span>Ejercicio ____ min</span>
+            <span style="display:flex;align-items:center;gap:6px">Medicación <span style="width:11px;height:11px;border-radius:50%;border:1.2px solid #9DB39A"></span><span style="width:11px;height:11px;border-radius:50%;border:1.2px solid #9DB39A"></span><span style="width:11px;height:11px;border-radius:50%;border:1.2px solid #9DB39A"></span></span>
+            <span style="display:flex;align-items:center;gap:6px">Regla <span style="width:11px;height:11px;border-radius:50%;border:1.2px solid #C98B86"></span></span>
+            <span style="display:flex;align-items:center;gap:6px">Skincare AM <span style="width:11px;height:11px;border-radius:50%;border:1.2px solid #D9C4BB"></span> PM <span style="width:11px;height:11px;border-radius:50%;border:1.2px solid #D9C4BB"></span></span>
+            <span>Energía 0 1 2 3</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px">Agua
+            <sc-for list="{{ eight }}" as="x" hint-placeholder-count="8"><span style="width:13px;height:17px;border-radius:3px 3px 6px 6px;border:1.2px solid #A9BFCB"></span></sc-for>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="flex:1;background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:20px">Horario</div>
+          <sc-for list="{{ hours }}" as="h" hint-placeholder-count="17"><div style="flex:1;display:flex;align-items:center;border-bottom:1px solid #F1E9E2;font-size:10px;color:#A99B96;font-variant-numeric:tabular-nums">{{ h }}</div></sc-for>
+        </div>
+        <div style="height:170px;background:#F4E4E0;border-radius:14px;padding:10px 14px;display:flex;flex-direction:column">
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:20px">Hoy agradezco</div>
+          <div style="flex:1;background-image:repeating-linear-gradient(transparent 0 27px,#E3C9C2 27px 28px)"></div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- NOTAS -->
+  <sc-if value="{{ p.isNotes }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:flex-end;gap:10px"><span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:36px;line-height:1">Notas</span><span style="flex:1;border-bottom:1px solid #C9B6AC;height:26px"></span></div>
+    <div style="flex:1;background:#FFFDFB;border:1px solid #EDE3DA;border-radius:14px;background-image:radial-gradient(circle,#D9C4BB 1px,transparent 1.3px);background-size:22px 22px;background-position:11px 11px"></div>
+  </sc-if>
+
+</div>
+
+<sc-if value="{{ p.hasNav }}" hint-placeholder-val="{{ false }}">
+  <div style="width:50px;flex-shrink:0;padding:22px 0 26px;display:flex;flex-direction:column;gap:3px">
+    <sc-for list="{{ p.tabs }}" as="t" hint-placeholder-count="15">
+      <a href="{{ t.href }}" style="flex:1;border-radius:10px 0 0 10px;background:{{ t.bg }};color:{{ t.color }};display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15">
+        <span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase">{{ t.label }}</span>
+        <span style="font-size:8.5px;opacity:.75">{{ t.yr }}</span>
+      </a>
+    </sc-for>
+  </div>
+</sc-if>
+
+</div>
+</section>
+</sc-for>
+</doc-page>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const pad = n => String(n).padStart(2, '0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parse = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d || 1); };
+const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return iso(d); };
+const MES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+const DOW = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const DL = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
+const cap = s => s[0].toUpperCase() + s.slice(1);
+const MOOD = [['+3', 'Muy alta', '#D6957E'], ['+2', 'Alta', '#E5B792'], ['+1', 'Algo alta', '#EDD6AA'], ['0', 'Estable', '#9DB39A'], ['−1', 'Algo baja', '#CAD4DE'], ['−2', 'Baja', '#AABACB'], ['−3', 'Muy baja', '#8FA3B8']];
+const TINT = ['#FBEFEA', '#FCF3EC', '#FDF7EF', '#F1F4EE', '#F3F6F8', '#EEF2F6', '#E9EEF3'];
+const weekOf = k => { const d = parse(k).getDay(); return addDays(k, -((d + 6) % 7)); };
+
+class Component extends DCLogic {
+  renderVals() {
+    const months = [];
+    for (let y = 2026, m = 10; y < 2028; m === 12 ? (y++, m = 1) : m++) months.push(`${y}-${pad(m)}`);
+    const weeks = [];
+    for (let w = '2026-09-28'; w <= '2027-12-27'; w = addDays(w, 7)) weeks.push(w);
+    const tabs = act => months.map(k => ({ href: '#m-' + k, label: MES[+k.slice(5) - 1].slice(0, 3), yr: "'" + k.slice(2, 4), bg: k === act ? '#3A2F2D' : (+k.slice(5) % 2 ? '#EFE6DD' : '#F4E4E0'), color: k === act ? '#FFFDFB' : '#3A2F2D' }));
+    const mDays = k => { const [y, m] = k.split('-').map(Number); return Array.from({ length: new Date(y, m, 0).getDate() }, (_, i) => `${k}-${pad(i + 1)}`); };
+    const inRange = k => k >= '2026-10-01' && k <= '2027-12-31';
+    const pages = [];
+    const P = (id, label, o, act) => pages.push({ id, label, hasNav: true, tabs: tabs(act), ...o });
+    pages.push({ id: 'portada', label: 'Portada', isCover: true, hasNav: false, tabs: [] });
+    P('indice', 'Índice', { isIndex: true });
+    P('anio', 'Año', { isYear: true });
+    P('metas', 'Metas', { isGoals: true });
+    P('plan', 'Mi plan', { isPlan: true });
+    P('tips', 'Tips', { isTips: true });
+    P('prioridades', 'Prioridades', { isMatrix: true });
+    months.forEach(k => {
+      const [y, m] = k.split('-').map(Number), days = mDays(k), title = cap(MES[m - 1]);
+      const lead = (parse(days[0]).getDay() + 6) % 7;
+      const cells = [];
+      for (let i = 0; i < lead; i++) cells.push({ num: '', href: '#m-' + k, bg: 'transparent', border: 'transparent', dot: 'transparent' });
+      days.forEach(d => { const we = [0, 6].includes(parse(d).getDay()); cells.push({ num: parse(d).getDate(), href: '#w-' + weekOf(d), bg: we ? '#FBF6F2' : '#FFFDFB', border: '#EDE3DA', dot: '#D9C4BB' }); });
+      while (cells.length % 7) cells.push({ num: '', href: '#m-' + k, bg: 'transparent', border: 'transparent', dot: 'transparent' });
+      const dayCols = days.map(d => { const dw = parse(d).getDay(); return { num: parse(d).getDate(), dow: DL[dw], color: dw === 0 || dw === 6 ? '#A8645F' : '#7A6A65', bg: dw === 0 || dw === 6 ? '#FBF3F0' : '#FFFDFB' }; });
+      const mWeeks = weeks.filter(w => addDays(w, 3).slice(0, 7) === k);
+      const weekLinks = mWeeks.map(w => { const e = parse(addDays(w, 6)), s = parse(w); return { href: '#w-' + w, label: `${s.getDate()}–${e.getDate()} ${MES[e.getMonth()].slice(0, 3)}` }; });
+      const subLinks = [['h', 'Hábitos'], ['a', 'Ánimo'], ['f', 'Finanzas']].map(([p, l]) => ({ href: `#${p}-${k}`, label: l }));
+      P('m-' + k, title + ' ' + y, { isMonth: true, title, year: y, cells, weekLinks, subLinks }, k);
+      P('h-' + k, 'Hábitos ' + title, { isHabits: true, title, year: y, days: dayCols }, k);
+      P('a-' + k, 'Ánimo ' + title, { isMood: true, title, year: y, days: dayCols }, k);
+      P('f-' + k, 'Finanzas ' + title, { isFin: true, title, year: y }, k);
+      mWeeks.forEach(w => {
+        const i = weeks.indexOf(w), s = parse(w), e = parse(addDays(w, 6));
+        const t = s.getMonth() === e.getMonth() ? `${s.getDate()} – ${e.getDate()} de ${MES[e.getMonth()]}` : `${s.getDate()} ${MES[s.getMonth()].slice(0, 3)} – ${e.getDate()} ${MES[e.getMonth()].slice(0, 3)}`;
+        const wdays = Array.from({ length: 7 }, (_, j) => { const d = addDays(w, j), dd = parse(d); return { num: dd.getDate(), name: DOW[dd.getDay()], href: inRange(d) ? '#m-' + d.slice(0, 7) : '#m-' + k, numColor: j > 4 ? '#A8645F' : '#3A2F2D' }; });
+        P('w-' + w, 'Semana ' + t, { isWeek: true, title: t, wn: i + 1, wdays, prev: '#w-' + weeks[Math.max(0, i - 1)], next: '#w-' + weeks[Math.min(weeks.length - 1, i + 1)] }, k);
+      });
+    });
+    P('diario', 'Diario', { isDaily: true });
+    P('notas', 'Notas', { isNotes: true });
+
+    const minis = months.map(k => {
+      const days = mDays(k), lead = (parse(days[0]).getDay() + 6) % 7;
+      const cells = Array.from({ length: lead }, () => ({ num: '', href: '#m-' + k, color: '#3A2F2D' }))
+        .concat(days.map(d => { const dw = parse(d).getDay(); return { num: parse(d).getDate(), href: '#w-' + weekOf(d), color: dw === 0 || dw === 6 ? '#A8645F' : '#3A2F2D' }; }));
+      return { label: cap(MES[+k.slice(5) - 1]) + ' ' + k.slice(0, 4), href: '#m-' + k, cells };
+    });
+
+    return {
+      pages, minis,
+      topNav: [['#indice', 'Índice'], ['#anio', 'Año'], ['#metas', 'Metas'], ['#plan', 'Mi plan'], ['#tips', 'Tips'], ['#prioridades', 'Prioridades'], ['#diario', 'Diario'], ['#notas', 'Notas']].map(([href, label]) => ({ href, label })),
+      indexMain: [['#anio', 'Año', '15 meses de un vistazo'], ['#metas', 'Metas', 'Visión, áreas y trimestres'], ['#plan', 'Mi plan', 'Medicación, señales y apoyo'], ['#tips', 'Tips', 'Para mantener la estabilidad'], ['#prioridades', 'Prioridades', 'Matriz para decidir'], ['#diario', 'Diario', 'Página para duplicar']].map(([href, label, sub]) => ({ href, label, sub })),
+      indexMonths: months.map(k => ({ label: cap(MES[+k.slice(5) - 1]) + ' ' + k.slice(0, 4), href: '#m-' + k, h: '#h-' + k, a: '#a-' + k, f: '#f-' + k })),
+      dowHead: ['L', 'M', 'X', 'J', 'V', 'S', 'D'], dowHeadLong: ['L', 'M', 'X', 'J', 'V', 'S', 'D'],
+      three: [1, 2, 3], four: [1, 2, 3, 4], eight: [1, 2, 3, 4, 5, 6, 7, 8], ten: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      areas: [['Salud', '#E3EADF'], ['Carrera', '#E7E1EE'], ['Finanzas', '#F5EAD2'], ['Relaciones', '#F4E4E0'], ['Crecimiento', '#E1E7EE'], ['Hogar', '#EFE6DD']].map(([label, bg]) => ({ label, bg })),
+      quarters: ['Q4 2026 · oct–dic', 'Q1 2027 · ene–mar', 'Q2 2027 · abr–jun', 'Q3 2027 · jul–sep', 'Q4 2027 · oct–dic', 'Palabra del año'],
+      anchors: ['Despertar', 'Desayuno', 'Comida', 'Movimiento', 'Cena', 'Dormir'],
+      signs: [{ title: 'Señales de subida', hint: 'Lo que noto cuando voy hacia arriba.', bg: '#F5EAD2' }, { title: 'Señales de bajada', hint: 'Lo que noto cuando voy hacia abajo.', bg: '#E1E7EE' }, { title: 'Lo que me ayuda', hint: 'Acciones concretas cuando noto una señal.', bg: '#E3EADF' }],
+      tips: ['Mantén horarios regulares para despertar, comer y dormir, también el fin de semana. La regularidad protege el ánimo.', 'Dormir menos de lo habitual puede ser una señal temprana y también un detonante. Si pasa dos noches seguidas, avisa a tu equipo.', 'Registra tu ánimo cada día. El patrón de varias semanas dice más que un día suelto.', 'No cambies ni dejes la medicación sin hablarlo con tu psiquiatra, aunque te sientas bien.', 'Reduce el alcohol y la cafeína, sobre todo por la tarde.', 'Antes de una decisión grande, como un gasto o un compromiso nuevo, espera 48 horas y coméntalo con alguien de confianza.', 'En días bajos, planifica menos. Una sola prioridad también cuenta.', 'Lleva la página de ánimo de cada mes a tus citas. Ayuda a ajustar el tratamiento.'].map((text, i) => ({ n: pad(i + 1), text })),
+      quadrants: [['Hacer ya', 'Urgente · Importante', '#F4E4E0'], ['Planificar', 'Importante · No urgente', '#E3EADF'], ['Delegar', 'Urgente · No importante', '#F5EAD2'], ['Soltar', 'Ni urgente ni importante', '#E7E1EE']].map(([title, sub, bg]) => ({ title, sub, bg })),
+      habits: ['Tomar medicación', 'Dormir a mi hora', 'Beber 2 L de agua', 'Moverme 30 min', 'Leer 20 min', 'Meditar', 'Sin pantallas 22 h', '', '', '', '', ''],
+      moodRows: MOOD.map(([n, label, c], i) => ({ n, label, c, tint: TINT[i] })),
+      wellRows: ['Sueño (h)', 'Medicación', 'Energía', 'Ansiedad', 'Regla', 'Ejercicio', 'Skincare'],
+      moodDots: MOOD.slice().reverse().map(m => m[2]),
+      moodScale: MOOD.slice().reverse().map(([n, , c]) => ({ n, c })),
+      finBoxes: [['Ingresos', '#E3EADF'], ['Gastos', '#F4E4E0'], ['Balance', '#EFE6DD']].map(([label, bg]) => ({ label, bg })),
+      cats: ['Casa', 'Comida', 'Transporte', 'Salud', 'Personal', 'Ocio', 'Ahorro', 'Otros'],
+      savingsRows: [1, 2],
+      hours: Array.from({ length: 17 }, (_, i) => pad(6 + i) + ':00')
+    };
+  }
+}
+</script>
+</body>
+</html>
