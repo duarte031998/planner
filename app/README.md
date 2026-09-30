@@ -20,3 +20,9 @@ npm run build    # genera dist/ (estático, se sube a cualquier hosting)
 - **Sin conexión:** el service worker (`public/sw.js`) guarda la app en caché.
 
 Importante: los datos van ligados a la dirección (dominio) donde se aloje la app. Publícala en una URL fija y ábrela siempre desde ahí.
+
+## Publicación
+
+Cada cambio en `main` se publica solo en GitHub Pages (`.github/workflows/deploy.yml`): https://duarte031998.github.io/planner/
+
+Primera vez: en GitHub, *Settings → Pages → Source*, elegir **GitHub Actions**.
